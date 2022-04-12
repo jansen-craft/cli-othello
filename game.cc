@@ -23,17 +23,20 @@ namespace main_savitch_14
     // The return value is the winner of the game (or NEUTRAL for a tie).
     {
 		restart( );
-		// Note that as you develop the game you will be gradually un-commenting this function.	
-		//while(!is_game_over( ))
-		//{
+		// Note that as you develop the game you will be gradually un-commenting 
+		// this function.	
+		while (!is_game_over( ))
+		{
 			display_status( );
 			//if (last_mover( ) == COMPUTER)
 				make_human_move( );
 			//else
 				//make_computer_move( );
-		//}
+		}
 		display_status( );
-		return HUMAN;
+		return winning();	// although the winning function is listed as 
+							// an optional override, you should write your 
+							// own. It simply counts pieces.
     }
 
 
@@ -160,8 +163,9 @@ namespace main_savitch_14
 		{
 			display_message("Illegal move.\n");
 			move = get_user_move( );
-        }
+		}
 		make_move(move);
-    }
-
+		}
 }
+
+	
