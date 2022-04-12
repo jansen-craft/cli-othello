@@ -33,24 +33,24 @@ void Othello::make_move(const std::string& move){
     string Umove ="";
     for (size_t i = 0; i < move.size(); i++){
         if(move.at(i) >= 'a' && move.at(i) <= 'z'){
-            Umove += tolower(move.at(i));
+            Umove += toupper(move.at(i));
         } else {
             Umove += move.at(i);
         }
     }
 
-    if(Umove == "e3"){
-        board[2][4].set_state(2);
-        board[3][4].flip();
-    } else if(Umove == "f4"){
-        board[3][5].set_state(2);
-        board[3][4].flip();
-    } else if(Umove == "c5"){
-        board[4][2].set_state(2);
-        board[4][3].flip();
-    } else if(Umove == "d6"){
-        board[5][3].set_state(2);
-        board[4][3].flip();
+    if(Umove == "C4"){
+        board[3][2].set_state(1);
+        board[3][3].flip();
+    } else if(Umove == "D3"){
+        board[2][3].set_state(1);
+        board[3][3].flip();
+    } else if(Umove == "E6"){
+        board[5][4].set_state(1);
+        board[4][4].flip();
+    } else if(Umove == "F5"){
+        board[4][5].set_state(1);
+        board[4][4].flip();
     } else {
         cout << "ERROR: Invalid Move" << endl;
     }
@@ -126,7 +126,7 @@ void Othello::display_status()const{
         cout << "|" << B_WHITE << "      " << RESET << endl;
     }
     cout << B_WHITE << ".                                           ." << RESET << endl;
-    cout << "Moves - e3 f4 c5 d6" << endl;
+    cout << "Moves - c4 d3 e6 f5" << endl;
     return;
 }
 // Evaluate a board position:. NOTE: positive values are good for the computer.
@@ -141,16 +141,55 @@ bool Othello::is_game_over()const{
 }
 // Return true if the given move is legal for the next player:
 bool Othello::is_legal(const std::string& move)const{
+    //Return immediately false if less than two characters
+    if(move.length() < 2){
+        return false;
+    }
+
+    //Turn it all to uppercase
     string Umove ="";
     for (size_t i = 0; i < move.size(); i++){
         if(move.at(i) >= 'a' && move.at(i) <= 'z'){
-            Umove += tolower(move.at(i));
+            Umove += toupper(move.at(i));
         } else {
             Umove += move.at(i);
         }
     }
-    
-    if(Umove == "e3" || move == "f4" || move == "c5" || move == "d6"){
+
+    //Return false if first char is not between A&H
+    if(Umove.at(0) < 'A' || Umove.at(0) > 'H') return false;
+    //Return false if second char is not between 1&8
+    if(Umove.at(1) < '1' || Umove.at(1) > '8') return false;
+    //If it reaches here the move must be on the board somewhere
+
+    //Turn A-H into Index Column
+    //int col = (Umove.at(0) - 'A');
+    //Turn 1-8 into Index Row
+    //int row = (Umove.at(1) - '1');
+
+    //int colTMP = col;
+    //int rowTMP = row;
+    //Check if the move is legal
+    //Up
+    //while(colTMP >= 0 && colTMP <= 7 && rowTMP >= 0 && rowTMP <= 7){
+    //    if()
+    //}
+    //Right
+
+    //Down
+
+    //Left
+
+    //Up-Right
+
+    //Down-Left
+
+    //Down-Right
+
+    //Up-Left
+
+    //Check to see if move is legal
+    if(Umove == "C4" || Umove == "D3" || Umove == "E6" || Umove == "F5"){
         return true;
     }else{
         return false;
