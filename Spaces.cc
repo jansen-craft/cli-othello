@@ -1,9 +1,15 @@
+/**
+ * @file Spaces.cc
+ * @author Jansen Craft
+ * @brief Spaces/Cell Class Definition FIle for Othello game
+ * @date 2022-04-11
+ */
+
 #include "Spaces.h"
 #include "colors.h"
 using namespace std;
-//Spaces FUNCTIONS
 
-//Mutator
+//SPACES Mutator
 void Spaces::set_state(int userEntry){
     if(userEntry >= 0 && userEntry <= 2){
         state = userEntry;
@@ -13,7 +19,7 @@ void Spaces::set_state(int userEntry){
     return;
 }
 
-//Flip State
+//SPACES Flip State
 void Spaces::flip(){
     if(state == 2){ //White
         state = 1;
@@ -25,7 +31,7 @@ void Spaces::flip(){
     return;
 }
 
-// output operator, overloaded as a friend function
+//SPACES overloaded output operator
 ostream& operator <<(ostream& outs, Spaces s){
     if(s.get_state() == 2){ //White Space
         cout << WHITE << "@" << GREEN;

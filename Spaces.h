@@ -1,9 +1,16 @@
+/**
+ * @file Spaces.h
+ * @author Jansen Craft
+ * @brief Spaces/Cell Class Declaration FIle for Othello game
+ * @date 2022-04-11
+ */
+
 #include "iostream"
 using namespace std;
 
 class Spaces{
 	public:
-		Spaces(){state = 1;} //TODO CHANGE THIS TO 0
+		Spaces(){state = 0;} //TODO CHANGE THIS TO 0
 
 		//Accessor
 		char get_state()const{return state;}
@@ -14,13 +21,9 @@ class Spaces{
 		//Flip State
 		void flip();
 
+		//Overloaded Output Operator
         friend std::ostream& operator <<(std::ostream& outs, Spaces s);
 
 	private:
-		int state;
-		/*
-		0 - empty
-		1 - black
-		2 - white
-		*/
+		int state; // 0, 1, 2 = empty, black, white
 };

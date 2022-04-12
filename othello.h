@@ -1,12 +1,19 @@
+/**
+ * @file othello.h
+ * @author Jansen Craft
+ * @brief Othello Class Declaration FIle for Othello game. Child of game class
+ * @date 2022-04-11
+ */
+
 #include "game.h"
 #include "Spaces.h"
 using namespace std;
 using namespace main_savitch_14;
+
 //Othello Class
 class Othello:public game{
     public:
         Othello();
-
 
 		// Have the next player make a specified move:
 		void make_move(const std::string& move);
@@ -27,9 +34,7 @@ class Othello:public game{
 		bool is_game_over()const;
 		// Return true if the given move is legal for the next player:
 		bool is_legal(const std::string& move)const;
-        //!!END
 
     private:
         Spaces board[8][8];
-        /* a two-dimensional array of Spaces, pieces, or pointers1 to Spaces or pieces, where the Spaces are another class which you have written */
 };

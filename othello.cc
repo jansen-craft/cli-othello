@@ -1,3 +1,9 @@
+/**
+ * @file othello.cc
+ * @author Jansen Craft
+ * @brief Othello Class Definition FIle for Othello game. Child of game class
+ * @date 2022-04-11
+ */
 
 #include "othello.h"
 #include "colors.h"
@@ -7,8 +13,18 @@ using namespace std;
 using namespace main_savitch_14;
 
 Othello::Othello(){
-    //TODO
-    ;
+    //Set all Pieces empty
+    for (size_t i = 0; i < 8; i++){
+        for (size_t j = 0; j < 8; j++){
+            board[i][j].set_state(0);
+        }  
+    }
+    
+    //Place First Pieces
+    board[3][3].set_state(2); //Top Left Middle
+    board[3][4].set_state(1); //Top Right Middle
+    board[4][3].set_state(1); //Bot Left Middle
+    board[4][4].set_state(2); //Bot Right Middle
 }
 
 // Have the next player make a specified move:
@@ -38,13 +54,12 @@ void Othello::make_move(const std::string& move){
     } else {
         cout << "ERROR: Invalid Move" << endl;
     }
-    //call Parent
+    //Call Parent
     game::make_move(move);
     return;
 }
 // Restart the game from the beginning:
 void Othello::restart(){
-    //TODO 6A
     //Reset All Pieces
     for (size_t i = 0; i < 8; i++){
         for (size_t j = 0; j < 8; j++){
@@ -59,13 +74,11 @@ void Othello::restart(){
     board[4][4].set_state(2); //Bot Right Middle
 
 
-    //call Parent
+    //Call Parent
     game::restart();
     return;
 }
 
-
-//!!REQUIRED FUNCTIONS
 // Return a pointer to a copy of myself:
 Othello* Othello::clone()const{
     //TODO
@@ -78,7 +91,7 @@ void Othello::compute_moves(std::queue<std::string>& moves)const{
 }
 // Display the status of the current game:
 void Othello::display_status()const{
-    //TODO
+    //Header
     cout << B_WHITE << BLUE << "             Welcome to " << BOLD << "Othello!" << RESET << B_WHITE << "             " << RESET << endl;
     cout << B_WHITE << ".                                           ." << RESET << endl;
 
@@ -128,7 +141,6 @@ bool Othello::is_game_over()const{
 }
 // Return true if the given move is legal for the next player:
 bool Othello::is_legal(const std::string& move)const{
-    //TODO 6A
     string Umove ="";
     for (size_t i = 0; i < move.size(); i++){
         if(move.at(i) >= 'a' && move.at(i) <= 'z'){
@@ -144,4 +156,3 @@ bool Othello::is_legal(const std::string& move)const{
         return false;
     }
 }
-//!!END
