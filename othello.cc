@@ -141,14 +141,65 @@ bool Othello::is_game_over()const{
 }
 // Return true if the given move is legal for the next player:
 bool Othello::is_legal(const std::string& move)const{
-    //Return immediately false if not two characters
-    if(move.length() != 2){
+    string cleanMv = cleanMove(move);
+    if(cleanMv == "invalid"){ //if not a valid string for move
         return false;
+    }
+
+    //Turn A-H into Index Column
+    int col = (cleanMv.at(0) - 'A');
+    //Turn 1-8 into Index Row
+    int row = (cleanMv.at(1) - '1');
+
+    cout << "r:" << row << " c:" << col << endl; //REMOVE
+    if(board[row][col].get_state() != 0) return false; //IF not empty then this is not a move
+
+    //Check if the move is legal
+
+    //Up
+    if(searchDirection(row, col, -1, 0) == 1) return true;
+    //Right
+    if(searchDirection(row, col, 0, 1) == 1) return true;
+    //Down
+    if(searchDirection(row, col, 1, 0) == 1) return true;
+    //Left
+    if(searchDirection(row, col, 0, -1) == 1) return true;
+    //Up-Right
+    if(searchDirection(row, col, -1, 1) == 1) return true;
+    //Down-Left
+    if(searchDirection(row, col, 1, -1) == 1) return true;
+    //Down-Right
+    if(searchDirection(row, col, 1, 1) == 1) return true;
+    //Up-Left
+    if(searchDirection(row, col, -1, -1) == 1) return true;
+
+    return false;
+}
+
+bool Othello::searchDirection(int row, int col, int rowDirection, int colDirection)const{
+    bool foundWhite = 0;
+    col += colDirection;
+    row += rowDirection;
+    while(col >= 0 && col <= 7 && row >= 0 && row <= 7){
+        if(board[row][col].get_state() == 2) foundWhite = 1; //Found First White
+        if(foundWhite == 1 && board[row][col].get_state() == 1) return true; //All white then Black
+        if(foundWhite == 0 && board[row][col].get_state() == 1) break; //All Black with no White Before
+        if(board[row][col].get_state() == 0) break; //Not possible for this direction
+        col += colDirection;
+        row += rowDirection;
+    }
+    return false;
+}
+
+string cleanMove(string move){
+    //Return immediately invalid if not two characters
+    if(move.length() != 2){
+        return "invalid";
     }
 
     //Turn it all to uppercase
     string Umove ="";
-    for (size_t i = 0; i < move.size(); i++){
+    for (size_t i = 0; i < 2; i++){
         if(move.at(i) >= 'a' && move.at(i) <= 'z'){
             Umove += toupper(move.at(i));
         } else {
@@ -156,120 +207,15 @@ bool Othello::is_legal(const std::string& move)const{
         }
     }
 
-    //Return false if first char is not between A&H
-    if(Umove.at(0) < 'A' || Umove.at(0) > 'H') return false;
-    //Return false if second char is not between 1&8
-    if(Umove.at(1) < '1' || Umove.at(1) > '8') return false;
+    //Return invalid if first char is not between A&H
+    if(Umove.at(0) < 'A' || Umove.at(0) > 'H') return "invalid";
+    //Return invalid if second char is not between 1&8
+    if(Umove.at(1) < '1' || Umove.at(1) > '8') return "invalid";
     //If it reaches here the move must be on the board somewhere
 
-    //Turn A-H into Index Column
-    int col = (Umove.at(0) - 'A');
-    //Turn 1-8 into Index Row
-    int row = (Umove.at(1) - '1');
+    string cleanString = "";
+    cleanString += Umove.at(0);
+    cleanString += Umove.at(1);
 
-    int colTMP = col;
-    int rowTMP = row;
-
-    bool foundWhite = 0;
-    cout << "r:" << row << " c:" << col << endl; //REMOVE
-    if(board[row][col].get_state() != 0) return false; //IF not empty then this is not a move
-
-    //Check if the move is legal
-
-    //Up
-    rowTMP--;
-    while(colTMP >= 0 && colTMP <= 7 && rowTMP >= 0 && rowTMP <= 7){
-        if(board[rowTMP][colTMP].get_state() == 2) foundWhite = 1; //Found First White
-        if(foundWhite == 1 && board[rowTMP][colTMP].get_state() == 1) return true; //All white then Black
-        if(foundWhite == 0 && board[rowTMP][colTMP].get_state() == 1) break; //Black with no White Before
-        if(board[rowTMP][colTMP].get_state() == 0) break; //Not possible for this direction
-        rowTMP--;
-    }
-    colTMP = col;
-    rowTMP = row;
-    //Right
-    colTMP++;
-    while(colTMP >= 0 && colTMP <= 7 && rowTMP >= 0 && rowTMP <= 7){
-        if(board[rowTMP][colTMP].get_state() == 2) foundWhite = 1; //Found First White
-        if(foundWhite == 1 && board[rowTMP][colTMP].get_state() == 1) return true; //All white then Black
-        if(foundWhite == 0 && board[rowTMP][colTMP].get_state() == 1) break; //Black with no White Before
-        if(board[rowTMP][colTMP].get_state() == 0) break; //Not possible for this direction
-        colTMP++;
-    }
-    colTMP = col;
-    rowTMP = row;
-    //Down
-    rowTMP++;
-    while(colTMP >= 0 && colTMP <= 7 && rowTMP >= 0 && rowTMP <= 7){
-        if(board[rowTMP][colTMP].get_state() == 2) foundWhite = 1; //Found First White
-        if(foundWhite == 1 && board[rowTMP][colTMP].get_state() == 1) return true; //All white then Black
-        if(foundWhite == 0 && board[rowTMP][colTMP].get_state() == 1) break; //All Black with no White Before
-        if(board[rowTMP][colTMP].get_state() == 0) break; //Not possible for this direction
-        rowTMP++;
-    }
-    colTMP = col;
-    rowTMP = row;
-    //Left
-    colTMP--;
-    while(colTMP >= 0 && colTMP <= 7 && rowTMP >= 0 && rowTMP <= 7){
-        if(board[rowTMP][colTMP].get_state() == 2) foundWhite = 1; //Found First White
-        if(foundWhite == 1 && board[rowTMP][colTMP].get_state() == 1) return true; //All white then Black
-        if(foundWhite == 0 && board[rowTMP][colTMP].get_state() == 1) break; //All Black with no White Before
-        if(board[rowTMP][colTMP].get_state() == 0) break; //Not possible for this direction
-        colTMP--;
-    }
-    colTMP = col;
-    rowTMP = row;
-    //Up-Right
-    colTMP++;
-    rowTMP--;
-    while(colTMP >= 0 && colTMP <= 7 && rowTMP >= 0 && rowTMP <= 7){
-        if(board[rowTMP][colTMP].get_state() == 2) foundWhite = 1; //Found First White
-        if(foundWhite == 1 && board[rowTMP][colTMP].get_state() == 1) return true; //All white then Black
-        if(foundWhite == 0 && board[rowTMP][colTMP].get_state() == 1) break; //All Black with no White Before
-        if(board[rowTMP][colTMP].get_state() == 0) break; //Not possible for this direction
-        colTMP++;
-        rowTMP--;
-    }
-    colTMP = col;
-    rowTMP = row;
-    //Down-Left
-    colTMP--;
-    rowTMP++;
-    while(colTMP >= 0 && colTMP <= 7 && rowTMP >= 0 && rowTMP <= 7){
-        if(board[rowTMP][colTMP].get_state() == 2) foundWhite = 1; //Found First White
-        if(foundWhite == 1 && board[rowTMP][colTMP].get_state() == 1) return true; //All white then Black
-        if(foundWhite == 0 && board[rowTMP][colTMP].get_state() == 1) break; //All Black with no White Before
-        if(board[rowTMP][colTMP].get_state() == 0) break; //Not possible for this direction
-        colTMP--;
-        rowTMP++;
-    }
-    colTMP = col;
-    rowTMP = row;
-    //Down-Right
-    colTMP++;
-    rowTMP++;
-    while(colTMP >= 0 && colTMP <= 7 && rowTMP >= 0 && rowTMP <= 7){
-        if(board[rowTMP][colTMP].get_state() == 2) foundWhite = 1; //Found First White
-        if(foundWhite == 1 && board[rowTMP][colTMP].get_state() == 1) return true; //All white then Black
-        if(foundWhite == 0 && board[rowTMP][colTMP].get_state() == 1) break; //All Black with no White Before
-        if(board[rowTMP][colTMP].get_state() == 0) break; //Not possible for this direction
-        colTMP++;
-        rowTMP++;
-    }
-    colTMP = col;
-    rowTMP = row;
-    //Up-Left
-    colTMP--;
-    rowTMP--;
-    while(colTMP >= 0 && colTMP <= 7 && rowTMP >= 0 && rowTMP <= 7){
-        if(board[rowTMP][colTMP].get_state() == 2) foundWhite = 1; //Found First White
-        if(foundWhite == 1 && board[rowTMP][colTMP].get_state() == 1) return true; //All white then Black
-        if(foundWhite == 0 && board[rowTMP][colTMP].get_state() == 1) break; //All Black with no White Before
-        if(board[rowTMP][colTMP].get_state() == 0) break; //Not possible for this direction
-        colTMP--;
-        rowTMP--;
-    }
-
-    return false;
+    return cleanString;
 }
