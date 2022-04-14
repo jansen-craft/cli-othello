@@ -29,31 +29,48 @@ Othello::Othello(){
 
 // Have the next player make a specified move:
 void Othello::make_move(const std::string& move){
-    //TODO 6A
-    string Umove ="";
-    for (size_t i = 0; i < move.size(); i++){
-        if(move.at(i) >= 'a' && move.at(i) <= 'z'){
-            Umove += toupper(move.at(i));
-        } else {
-            Umove += move.at(i);
-        }
+    int curPlayer;
+    int nextPlayer;
+
+    //Check Whose Move it is 
+    if(next_mover() == 0){ //In this case 0 is human which is black
+        curPlayer = 1;
+        nextPlayer = 2;
+    } else if(next_mover() == 2){ //In this case 2 is computer which is white
+        curPlayer = 2;
+        nextPlayer = 1;
+    } else { //Neither Person's turn?
+        cout << "How did We get Here?" << endl; //REMOVE TODO
     }
 
-    if(Umove == "C4"){
-        board[3][2].set_state(1);
-        board[3][3].flip();
-    } else if(Umove == "D3"){
-        board[2][3].set_state(1);
-        board[3][3].flip();
-    } else if(Umove == "E6"){
-        board[5][4].set_state(1);
-        board[4][4].flip();
-    } else if(Umove == "F5"){
-        board[4][5].set_state(1);
-        board[4][4].flip();
-    } else {
-        cout << "ERROR: Invalid Move" << endl;
-    }
+    string cleanMv = cleanMove(move); //Clean Move
+
+    //Turn A-H into Index Column
+    int col = (cleanMv.at(0) - 'A');
+    //Turn 1-8 into Index Row
+    int row = (cleanMv.at(1) - '1');
+
+    //Make Move
+    board[row][col].set_state(curPlayer);
+    
+    //Make Flips
+    //Up
+    flipDir(row, col, -1, 0, curPlayer, nextPlayer);
+    //Right
+    flipDir(row, col, 0, 1, curPlayer, nextPlayer);
+    //Down
+    flipDir(row, col, 1, 0, curPlayer, nextPlayer);
+    //Left
+    flipDir(row, col, 0, -1, curPlayer, nextPlayer);
+    //Up-Right
+    flipDir(row, col, -1, 1, curPlayer, nextPlayer);
+    //Down-Left
+    flipDir(row, col, 1, -1, curPlayer, nextPlayer);
+    //Down-Right
+    flipDir(row, col, 1, 1, curPlayer, nextPlayer);
+    //Up-Left
+    flipDir(row, col, -1, -1, curPlayer, nextPlayer);
+
     //Call Parent
     game::make_move(move);
     return;
@@ -82,11 +99,13 @@ void Othello::restart(){
 // Return a pointer to a copy of myself:
 Othello* Othello::clone()const{
     //TODO
+    //6B
     return NULL;
 }
 // Compute all the moves that the next player can make:
 void Othello::compute_moves(std::queue<std::string>& moves)const{
     //TODO
+    //compute moves for computer 6B
     return;
 }
 // Display the status of the current game:
@@ -141,6 +160,20 @@ bool Othello::is_game_over()const{
 }
 // Return true if the given move is legal for the next player:
 bool Othello::is_legal(const std::string& move)const{
+    int curPlayer;
+    int nextPlayer;
+
+    //Check Whose Move it is 
+    if(next_mover() == 0){ //In this case 0 is human which is black
+        curPlayer = 1;
+        nextPlayer = 2;
+    } else if(next_mover() == 2){ //In this case 2 is computer which is white
+        curPlayer = 2;
+        nextPlayer = 1;
+    } else { //Neither Person's turn?
+        cout << "How did We get Here?" << endl; //REMOVE TODO
+    }
+
     string cleanMv = cleanMove(move);
     if(cleanMv == "invalid"){ //if not a valid string for move
         return false;
@@ -151,39 +184,77 @@ bool Othello::is_legal(const std::string& move)const{
     //Turn 1-8 into Index Row
     int row = (cleanMv.at(1) - '1');
 
-    cout << "r:" << row << " c:" << col << endl; //REMOVE
     if(board[row][col].get_state() != 0) return false; //IF not empty then this is not a move
 
     //Check if the move is legal
 
     //Up
-    if(searchDirection(row, col, -1, 0) == 1) return true;
+    if(searchDirection(row, col, -1, 0, curPlayer, nextPlayer) == 1) return true;
     //Right
-    if(searchDirection(row, col, 0, 1) == 1) return true;
+    if(searchDirection(row, col, 0, 1, curPlayer, nextPlayer) == 1) return true;
     //Down
-    if(searchDirection(row, col, 1, 0) == 1) return true;
+    if(searchDirection(row, col, 1, 0, curPlayer, nextPlayer) == 1) return true;
     //Left
-    if(searchDirection(row, col, 0, -1) == 1) return true;
+    if(searchDirection(row, col, 0, -1, curPlayer, nextPlayer) == 1) return true;
     //Up-Right
-    if(searchDirection(row, col, -1, 1) == 1) return true;
+    if(searchDirection(row, col, -1, 1, curPlayer, nextPlayer) == 1) return true;
     //Down-Left
-    if(searchDirection(row, col, 1, -1) == 1) return true;
+    if(searchDirection(row, col, 1, -1, curPlayer, nextPlayer) == 1) return true;
     //Down-Right
-    if(searchDirection(row, col, 1, 1) == 1) return true;
+    if(searchDirection(row, col, 1, 1, curPlayer, nextPlayer) == 1) return true;
     //Up-Left
-    if(searchDirection(row, col, -1, -1) == 1) return true;
+    if(searchDirection(row, col, -1, -1, curPlayer, nextPlayer) == 1) return true;
 
     return false;
 }
 
-bool Othello::searchDirection(int row, int col, int rowDirection, int colDirection)const{
-    bool foundWhite = 0;
+void Othello::flipDir(int row, int col, int rowDir, int colDir, int curPlayer, int nextPlayer){
+    bool foundFlip = 0;
+    bool foundOther = 0;
+    bool foundBad = 0;
+    int flipCol = -1;
+    int flipRow = -1;
+    int Ncol = col; //Temp column
+    int Nrow = row; //Temp row
+
+    Ncol += colDir;
+    Nrow += rowDir;
+    //Looks for flips
+    while(Ncol >= 0 && Ncol <= 7 && Nrow >= 0 && Nrow <= 7){
+        if(board[Nrow][Ncol].get_state() == nextPlayer && foundBad == 0) foundOther = 1; //Found First other
+        if(foundOther == 1 && board[Nrow][Ncol].get_state() == curPlayer){ //Found Flip spot
+            flipCol = Ncol;
+            flipRow = Nrow;
+            foundFlip = 1;
+        }
+        if(board[Nrow][Ncol].get_state() == 0) foundBad = 1; //Not possible for this direction
+        Ncol += colDir;
+        Nrow += rowDir;
+    }
+
+    //flip them
+    if(foundFlip == 1){ //This direction has flips
+        //Flip from original spot to flip spot
+        col += colDir;
+        row += rowDir;
+        while(col != flipCol || row != flipRow){
+            if(board[row][col].get_state() == nextPlayer) board[row][col].flip(); //Found First next
+            col += colDir;
+            row += rowDir;
+        }
+
+    }
+    return;
+}
+
+bool Othello::searchDirection(int row, int col, int rowDirection, int colDirection, int curPlayer, int nextPlayer)const{
+    bool foundOther = 0;
     col += colDirection;
     row += rowDirection;
     while(col >= 0 && col <= 7 && row >= 0 && row <= 7){
-        if(board[row][col].get_state() == 2) foundWhite = 1; //Found First White
-        if(foundWhite == 1 && board[row][col].get_state() == 1) return true; //All white then Black
-        if(foundWhite == 0 && board[row][col].get_state() == 1) break; //All Black with no White Before
+        if(board[row][col].get_state() == nextPlayer) foundOther = 1; //Found First next
+        if(foundOther == 1 && board[row][col].get_state() == curPlayer) return true; //All next then cur
+        if(foundOther == 0 && board[row][col].get_state() == curPlayer) break; //All Cur with no next Before
         if(board[row][col].get_state() == 0) break; //Not possible for this direction
         col += colDirection;
         row += rowDirection;

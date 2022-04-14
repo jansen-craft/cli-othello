@@ -35,6 +35,13 @@ class Othello:public game{
 		// Return true if the given move is legal for the next player:
 		bool is_legal(const std::string& move)const;
 
+
+		void flipDir(int row, int col, int rowDir, int colDir, int curPlayer, int nextPlayer);
+		//My Functions
+		bool searchDirection(int row, int col, int rowDirection, int colDirection, int curPlayer , int nextPlayer)const; //row & col Direction are -1 or 1
+
     private:
         Spaces board[8][8];
 };
+
+string cleanMove(string move);
