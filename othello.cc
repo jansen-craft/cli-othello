@@ -164,7 +164,7 @@ int Othello::evaluate()const{
     for (size_t i = 0; i < 8; i++){
         for (size_t j = 0; j < 8; j++){
             tmp = board[i][j].get_state();
-            if(tmp = 1){ //black gets a point (Human)
+            if(tmp == 1){ //black gets a point (Human)
                 score--;
             } else if(tmp == 2){ //White gets a point (Computer)
                 score++;
