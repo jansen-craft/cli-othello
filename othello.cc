@@ -105,7 +105,7 @@ Othello* Othello::clone()const{
 // Compute all the moves that the next player can make:
 void Othello::compute_moves(std::queue<std::string>& moves)const{
     //TODO
-    //compute moves for computer 6B
+    //compute moves for computer 6C
     return;
 }
 // Display the status of the current game:
@@ -145,13 +145,34 @@ void Othello::display_status()const{
         cout << "|" << B_WHITE << "      " << RESET << endl;
     }
     cout << B_WHITE << ".                                           ." << RESET << endl;
-    cout << "Moves - c4 d3 e6 f5" << endl;
+    string whosTurn;
+    if(next_mover() == 0){ //In this case 0 is human which is black
+        whosTurn = "Black";
+    } else if(next_mover() == 2){ //In this case 2 is computer which is white
+        whosTurn = "White";
+    } else { //Neither Person's turn?
+        whosTurn = "Nobody";
+    }
+    cout << "It is " << whosTurn << "'s turn." << endl;
+    cout << "If you have no moves enter: skip" << endl;
     return;
 }
 // Evaluate a board position:. NOTE: positive values are good for the computer.
 int Othello::evaluate()const{
-    //TODO
-    return 1;
+    int score = 0; // Who is winning - positive for computer
+    int tmp = -3;
+    for (size_t i = 0; i < 8; i++){
+        for (size_t j = 0; j < 8; j++){
+            tmp = board[i][j].get_state();
+            if(tmp = 1){ //black gets a point (Human)
+                score--;
+            } else if(tmp == 2){ //White gets a point (Computer)
+                score++;
+            }
+        }
+    }
+    
+    return score;
 }
 // Return true if the current game is finished:
 bool Othello::is_game_over()const{
@@ -223,11 +244,16 @@ void Othello::flipDir(int row, int col, int rowDir, int colDir, int curPlayer, i
     while(Ncol >= 0 && Ncol <= 7 && Nrow >= 0 && Nrow <= 7){
         if(board[Nrow][Ncol].get_state() == nextPlayer && foundBad == 0) foundOther = 1; //Found First other
         if(foundOther == 1 && board[Nrow][Ncol].get_state() == curPlayer){ //Found Flip spot
-            flipCol = Ncol;
-            flipRow = Nrow;
-            foundFlip = 1;
+            if(foundFlip == 0){
+                flipCol = Ncol;
+                flipRow = Nrow;
+                foundFlip = 1;
+            }
         }
-        if(board[Nrow][Ncol].get_state() == 0) foundBad = 1; //Not possible for this direction
+        if(board[Nrow][Ncol].get_state() == 0){  //Not possible for this direction
+            foundBad = 1;
+            foundOther = 0;
+        }
         Ncol += colDir;
         Nrow += rowDir;
     }
