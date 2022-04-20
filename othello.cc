@@ -13,6 +13,7 @@ using namespace std;
 using namespace main_savitch_14;
 
 Othello::Othello(){
+    noMoves = 0;
     //Set all Pieces empty
     for (size_t i = 0; i < 8; i++){
         for (size_t j = 0; j < 8; j++){
@@ -29,6 +30,12 @@ Othello::Othello(){
 
 // Have the next player make a specified move:
 void Othello::make_move(const std::string& move){
+    if(move == "skip"){ //Skip Move
+        game::make_move(move);
+        noMoves++;
+        return;
+    }
+    noMoves = 0;
     int curPlayer;
     int nextPlayer;
 
@@ -39,8 +46,8 @@ void Othello::make_move(const std::string& move){
     } else if(next_mover() == 2){ //In this case 2 is computer which is white
         curPlayer = 2;
         nextPlayer = 1;
-    } else { //Neither Person's turn?
-        cout << "How did We get Here?" << endl; //REMOVE TODO
+    } else { //Neither Person's turn? Must've been a solar flare
+        cout << "oh?... What have you done!!!" << endl;
     }
 
     string cleanMv = cleanMove(move); //Clean Move
@@ -98,14 +105,22 @@ void Othello::restart(){
 
 // Return a pointer to a copy of myself:
 Othello* Othello::clone()const{
-    //TODO
-    //6B
-    return NULL;
+    return new Othello(*this);
 }
 // Compute all the moves that the next player can make:
 void Othello::compute_moves(std::queue<std::string>& moves)const{
-    //TODO
-    //compute moves for computer 6C
+    //Must Use Strings
+    string move = "";
+    for (char i = 'A'; i < 'I'; i++){
+        for (char j = '1'; j < '9'; j++){
+            move += i;
+            move += j;
+            if(is_legal(move)){
+                moves.push(move);
+            }
+            move = "";
+        }
+    }
     return;
 }
 // Display the status of the current game:
@@ -171,16 +186,36 @@ int Othello::evaluate()const{
             }
         }
     }
-    
     return score;
 }
 // Return true if the current game is finished:
 bool Othello::is_game_over()const{
-    //TODO
+    if(noMoves >= 2){
+        return true;
+    }
     return false;
 }
 // Return true if the given move is legal for the next player:
 bool Othello::is_legal(const std::string& move)const{
+    bool can_move = 0;
+    if(move == "skip"){
+        //Must Use Strings
+        string tMove = "";
+        for (char i = 'A'; i < 'I'; i++){
+            for (char j = '1'; j < '9'; j++){
+                tMove += i;
+                tMove += j;
+                if(is_legal(tMove)){
+                    can_move = 1;
+                }
+                tMove = "";
+            }
+        }
+        if(can_move == 0){
+            return true;
+        }
+    }
+
     int curPlayer;
     int nextPlayer;
 
@@ -191,8 +226,8 @@ bool Othello::is_legal(const std::string& move)const{
     } else if(next_mover() == 2){ //In this case 2 is computer which is white
         curPlayer = 2;
         nextPlayer = 1;
-    } else { //Neither Person's turn?
-        cout << "How did We get Here?" << endl; //REMOVE TODO
+    } else { //Neither Person's turn? Impossible!!
+        cout << "WITCHCRAFT!!!" << endl;
     }
 
     string cleanMv = cleanMove(move);
