@@ -190,7 +190,13 @@ int Othello::evaluate()const{
 }
 // Return true if the current game is finished:
 bool Othello::is_game_over()const{
-    if(noMoves >= 2){
+    int num_empty = 0;
+    for (int i = 0; i < 8; i++){
+        for (int j = 0 ; j < 8 ; j++){
+            if(board[i][j].get_state() == 0)  num_empty++;
+        }
+    }
+    if(noMoves >= 2 || num_empty == 0){ //two loop
         return true;
     }
     return false;
