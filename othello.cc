@@ -87,7 +87,7 @@ void Othello::restart(){
     //Reset All Pieces
     for (size_t i = 0; i < 8; i++){
         for (size_t j = 0; j < 8; j++){
-            board[i][j].set_state(0);
+            board[i][j].set_state(2);
         }  
     }
     
@@ -96,6 +96,8 @@ void Othello::restart(){
     board[3][4].set_state(1); //Top Right Middle
     board[4][3].set_state(1); //Bot Left Middle
     board[4][4].set_state(2); //Bot Right Middle
+
+    board[5][0].set_state(0); //Bot Right Middle //REMOVE TODO
 
 
     //Call Parent
@@ -109,9 +111,8 @@ Othello* Othello::clone()const{
 }
 // Compute all the moves that the next player can make:
 void Othello::compute_moves(std::queue<std::string>& moves)const{
-    //Must Use Strings
     string move = "";
-    for (char i = 'A'; i < 'I'; i++){
+    for (char i = 'A'; i < 'I'; i++){ //Adds all legal moves to queue
         for (char j = '1'; j < '9'; j++){
             move += i;
             move += j;
@@ -120,6 +121,9 @@ void Othello::compute_moves(std::queue<std::string>& moves)const{
             }
             move = "";
         }
+    }
+    if(moves.empty() == 1){ //No moves possible, so skip
+        moves.push("skip");
     }
     return;
 }
