@@ -87,7 +87,7 @@ void Othello::restart(){
     //Reset All Pieces
     for (size_t i = 0; i < 8; i++){
         for (size_t j = 0; j < 8; j++){
-            board[i][j].set_state(2);
+            board[i][j].set_state(0);
         }  
     }
     
@@ -96,9 +96,6 @@ void Othello::restart(){
     board[3][4].set_state(1); //Top Right Middle
     board[4][3].set_state(1); //Bot Left Middle
     board[4][4].set_state(2); //Bot Right Middle
-
-    board[5][0].set_state(0); //Bot Right Middle //REMOVE TODO
-
 
     //Call Parent
     game::restart();
@@ -156,7 +153,7 @@ void Othello::display_status()const{
         for (size_t j = 0; j < 8; j++){
             cout << " " << board[i - 1][j] << " |";
         }
-        cout << B_WHITE << "      " << RESET << endl;
+        cout << B_WHITE << "      " << RESET << RESET << endl;
 
         //Bottom Lines
         cout << B_WHITE << "      " << B_CYAN;
