@@ -1,4 +1,4 @@
-// File: game.h (part of the namespace main_savitch_14)
+// File: game.hpp (part of the namespace main_savitch_14)
 
 
 #ifndef MAIN_SAVITCH_GAME

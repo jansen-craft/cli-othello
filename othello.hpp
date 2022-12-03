@@ -1,12 +1,12 @@
 /**
- * @file othello.h
+ * @file othello.hpp
  * @author Jansen Craft
  * @brief Othello Class Declaration FIle for Othello game. Child of game class
  * @date 2022-04-11
  */
 
-#include "game.h"
-#include "Spaces.h"
+#include "game.hpp"
+#include "spaces.hpp"
 using namespace std;
 using namespace main_savitch_14;
 

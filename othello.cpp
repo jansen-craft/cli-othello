@@ -1,14 +1,15 @@
 /**
- * @file othello.cc
+ * @file othello.cpp
  * @author Jansen Craft
  * @brief Othello Class Definition FIle for Othello game. Child of game class
  * @date 2022-04-11
  */
 
-#include "othello.h"
-#include "colors.h"
+#include "othello.hpp"
+#include "colors.hpp"
 #include <iostream>
 #include <iomanip>
+#include <unistd.h>
 using namespace std;
 using namespace main_savitch_14;
 
@@ -36,14 +37,14 @@ void Othello::make_move(const std::string& move){
         return;
     }
     noMoves = 0;
-    int curPlayer;
-    int nextPlayer;
+    int curPlayer = 0;
+    int nextPlayer = 0;
 
     //Check Whose Move it is 
-    if(next_mover() == 0){ //In this case 0 is human which is black
+    if(next_mover() == 0){ //In this case 0 is human which is red
         curPlayer = 1;
         nextPlayer = 2;
-    } else if(next_mover() == 2){ //In this case 2 is computer which is white
+    } else if(next_mover() == 2){ //In this case 2 is computer which is blue
         curPlayer = 2;
         nextPlayer = 1;
     } else { //Neither Person's turn? Must've been a solar flare
@@ -126,9 +127,10 @@ void Othello::compute_moves(std::queue<std::string>& moves)const{
 }
 // Display the status of the current game:
 void Othello::display_status()const{
+    write(1,"\E[H\E[2J",7); // clear console
     //Header
     cout << B_WHITE << BLUE << "             Welcome to " << BOLD << "Othello!" << RESET << B_WHITE << "             " << RESET << endl;
-    cout << B_WHITE << ".                                           ." << RESET << endl;
+    cout << B_WHITE << "                                             " << RESET << endl;
 
     //Top Letters
     char tmp = 'A';
@@ -140,32 +142,37 @@ void Othello::display_status()const{
     cout << "  " <<  "      " << RESET << endl;
     
     //Top Line
-    cout << B_WHITE << "      " << B_CYAN;
-    for (size_t k = 0; k < 8; k++) cout << "|---";
-    cout << "|" << B_WHITE << "      " << RESET << endl;
+    cout << B_WHITE << "      " << GREEN_WHITE;
+    std::cout << "┏━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┓";
+    cout << B_WHITE << "      " << RESET << endl;
     
     //Bulk with Pieces
     for (size_t i = 1; i < 9; i++){
         //Piece Row
         cout << B_WHITE << BOLD << BLUE;
         cout << "   " << i << "  ";
-        cout << RESET << B_CYAN << "|";
+        cout << RESET << B_WHITE << GREEN_WHITE << "┃";
         for (size_t j = 0; j < 8; j++){
-            cout << " " << board[i - 1][j] << " |";
+            cout << " " << board[i - 1][j] << GREEN_WHITE << " ┃";
         }
-        cout << B_WHITE << "      " << RESET << RESET << endl;
+        cout << B_WHITE << "      " << RESET << endl;
 
         //Bottom Lines
-        cout << B_WHITE << "      " << B_CYAN;
-        for (size_t k = 0; k < 8; k++) cout << "|---";
-        cout << "|" << B_WHITE << "      " << RESET << endl;
+        cout << B_WHITE << "      " << "\x1b[38;5;108m";
+        if(i != 8){
+            std::cout << "┣━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━┫";
+        } else {
+            std::cout << "┗━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┛";
+        }
+        cout << B_WHITE << "      " << RESET << endl;
     }
-    cout << B_WHITE << ".                                           ." << RESET << endl;
+    
+    cout << B_WHITE << "                                             " << RESET << endl;
     string whosTurn;
-    if(next_mover() == 0){ //In this case 0 is human which is black
-        whosTurn = "Black";
-    } else if(next_mover() == 2){ //In this case 2 is computer which is white
-        whosTurn = "White";
+    if(next_mover() == 0){ //In this case 0 is human which is red
+        whosTurn = "Red";
+    } else if(next_mover() == 2){ //In this case 2 is computer which is blue
+        whosTurn = "Blue";
     } else { //Neither Person's turn?
         whosTurn = "Nobody";
     }
@@ -180,9 +187,9 @@ int Othello::evaluate()const{
     for (size_t i = 0; i < 8; i++){
         for (size_t j = 0; j < 8; j++){
             tmp = board[i][j].get_state();
-            if(tmp == 1){ //black gets a point (Human)
+            if(tmp == 1){ //red gets a point (Human)
                 score--;
-            } else if(tmp == 2){ //White gets a point (Computer)
+            } else if(tmp == 2){ //blue gets a point (Computer)
                 score++;
             }
         }
@@ -227,10 +234,10 @@ bool Othello::is_legal(const std::string& move)const{
     int nextPlayer;
 
     //Check Whose Move it is 
-    if(next_mover() == 0){ //In this case 0 is human which is black
+    if(next_mover() == 0){ //In this case 0 is human which is red
         curPlayer = 1;
         nextPlayer = 2;
-    } else if(next_mover() == 2){ //In this case 2 is computer which is white
+    } else if(next_mover() == 2){ //In this case 2 is computer which is blue
         curPlayer = 2;
         nextPlayer = 1;
     } else { //Neither Person's turn? Impossible!!

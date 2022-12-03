@@ -6,7 +6,7 @@
 	John Dolan	Ohio University		Fall 2019
 *************************************************************************/
 #include<iostream>
-#include "othello.h"
+#include "othello.hpp"
 using namespace std;
 using namespace main_savitch_14;
 
