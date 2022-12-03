@@ -30,11 +30,7 @@
 #include <string>
 using namespace std;
 
-const string BLINK     = "\e[5m";   //don't use this your
-					   				//professor will probibly
-					   				//beat you to death if
-					   				//you do feel the need to
-					   				//use blink!!!
+const string BLINK     = "\e[5m";
 const string BOLD       = "\e[1m";
 
 const string RESET      = "\e[0m";
